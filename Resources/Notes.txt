@@ -1,0 +1,15 @@
+Publish MADirWatchServiceNet:
+	D:\MyProjects\MADirWatchServiceNet\MADirWatchServiceNet> dotnet publish -c Release -o .\bin\Release\net10.0\publish
+	Note: Copy generated files from \publish to C:\MADirWatchService\
+
+Install as a Windows Service:
+	using PowerShell (as Admin):
+		New-Service -Name "MADirWatchServiceNet" `
+		-BinaryPathName "C:\MADirWatchService\MADirWatchServiceNet.exe" `
+		-DisplayName "MADirWatchServiceNet" `
+		-Description "Runs directory watch service for MerchantAdvantage application" `
+		-StartupType Automatic
+
+Uninstall MADirWatchServiceNet:
+	using PowerShell (as Admin):
+		Remove-Service -Name "MADirWatchServiceNet"
