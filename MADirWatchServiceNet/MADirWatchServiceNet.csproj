@@ -6,6 +6,7 @@
 		<UserSecretsId>dotnet-MADirWatchServiceNet-4a91851e-386d-4608-a5c6-86ed1c6409bd</UserSecretsId>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<FileVersion>1.0.0.2</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

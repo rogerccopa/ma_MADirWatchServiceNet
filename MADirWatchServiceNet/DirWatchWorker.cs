@@ -34,13 +34,17 @@ public class DirWatchWorker : BackgroundService, IHostedLifecycleService
 	{
 		try
 		{
-			fileSystemWatcher = new FileSystemWatcher();
-			fileSystemWatcher.Path = watchDirectoryPath;
-			fileSystemWatcher.InternalBufferSize = 32 * 1024; // 32KB
-			fileSystemWatcher.IncludeSubdirectories = true;
-			fileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.LastAccess;
+			fileSystemWatcher = new FileSystemWatcher
+			{
+				Path = watchDirectoryPath,
+				InternalBufferSize = 32 * 1024, // 32KB
+				IncludeSubdirectories = true,
+				NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.LastAccess
+			};
 			fileSystemWatcher.Created += new FileSystemEventHandler(fileSystemWatcher_CreatedOrChanged);
 			fileSystemWatcher.Changed += new FileSystemEventHandler(fileSystemWatcher_CreatedOrChanged);
+			fileSystemWatcher.Renamed += new RenamedEventHandler((sender, e) => 
+				fileSystemWatcher_CreatedOrChanged(sender, e));
 			fileSystemWatcher.Error += new ErrorEventHandler(fileSystemWatcher_Error);
 
 			// Begin watching.
@@ -105,7 +109,9 @@ public class DirWatchWorker : BackgroundService, IHostedLifecycleService
 		string dbname = "";
 		string filename = "";
 
-		if (e.ChangeType == WatcherChangeTypes.Created || e.ChangeType == WatcherChangeTypes.Changed)
+		if (e.ChangeType == WatcherChangeTypes.Created || 
+			e.ChangeType == WatcherChangeTypes.Changed || 
+			e.ChangeType == WatcherChangeTypes.Renamed)
 		{
 			if (e.FullPath.ToLower().Contains(@"\store\"))
 			{
@@ -122,7 +128,7 @@ public class DirWatchWorker : BackgroundService, IHostedLifecycleService
 			}
 		}
 
-		if (filename.Length == 0 || dbname.Length == 0) { return; }
+		if (filename.Length == 0 || filename.EndsWith(".tmp") || dbname.Length == 0) { return; }
 		if (uploads.ContainsKey(dbname + filename)) { return; }
 
 		uploads.Add(dbname + filename, 0);
